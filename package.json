@@ -1,11 +1,10 @@
 {
   "name": "socketman",
   "version": "0.0.1",
-  "description": "Developer tool for monitoring and testing socket.IO events",
+  "description": "Developer tool for monitoring and testing Socket.IO events",
   "main": "./dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc"
   },
   "keywords": [
@@ -15,7 +14,7 @@
     "postman",
     "test"
   ],
-  "author": "Socketman",
+  "author": "Kyle McCracken, Imma Duverger, Nia Huang, Mario Robaina",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.0",
