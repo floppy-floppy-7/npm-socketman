@@ -26,7 +26,7 @@ setup(io);
 httpServer.listen(3000);
 ```
 
-4. Navigate to socketman.io in your browser
+4. Navigate to [socketman.io](http://sockeman.io) socketman.io in your browser
 5. Use the credentials from the `setup` method to create a connection between the webpage's socket instance and your server
 
 ---
