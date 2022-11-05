@@ -1,4 +1,4 @@
-import { Server } from './node_modules/socket.io/dist/index';
+import { Server } from 'socket.io/dist/index';
 interface Options {
     namespaceName?: string;
     auth: false | {

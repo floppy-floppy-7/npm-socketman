@@ -1,6 +1,6 @@
 {
   "name": "socketman",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "description": "Developer tool for monitoring and testing Socket.IO events",
   "main": "./dist/index.js",
   "types": "dist/index.d.ts",

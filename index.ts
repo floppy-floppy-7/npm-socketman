@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-import { Server, Socket, Namespace } from './node_modules/socket.io/dist/index';
+import { Server, Socket, Namespace } from 'socket.io/dist/index';
 
 interface Options {
   namespaceName?: string;

@@ -37,12 +37,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 exports.setup = void 0;
-var path = require('path');
 var bcrypt = require('bcrypt');
 function setup(sioInstance, options) {
-    // accept a socket.io instance, and an options object
     if (options === void 0) { options = { auth: false, namespaceName: '/admin' }; }
-    console.log('welcome to setup');
     function createEventObj(socketId, args, nsp, roomSet, direction) {
         var cb = args[args.length - 1] instanceof Function ? args[args.length - 1] : null;
         var payload = cb ? args.slice(1, -1) : args.slice(1);
@@ -62,84 +59,60 @@ function setup(sioInstance, options) {
     function initAuthMiddleware(adminNamespace, options) {
         var _this = this;
         if (options === void 0) { options = { auth: false }; }
-        console.log('====================');
         if (!options.hasOwnProperty('auth')) {
-            console.log(1);
-            console.log('You must have auth');
-            return;
+            throw new Error('Property auth not specified. Auth must at least be explicitly false');
         }
-        // if auth present but false
         if (options.auth === false) {
-            console.log(2);
-            console.log('Authentication is disabled, please use with caution');
+            console.warn('Authentication is disabled, please use with caution');
         }
-        // if auth present and not false
         else {
-            console.log(3);
             var basicAuth_1 = options.auth;
             // test if valid hash
             try {
-                console.log(4);
                 bcrypt.getRounds(basicAuth_1.password);
             }
             catch (e) {
-                console.log(5);
-                // console.log if invalid hash
-                console.log('the `password` field must be a valid bcrypt hash');
-                return;
+                throw new Error('the `password` field must be a valid bcrypt hash');
             }
             // if the passed hash from init is valid, we continue to set a middleware
-            // it will trigger on every new socket connection (this will really just be for the gui)
-            console.log(6);
+            // it will trigger on every new socket connection
             adminNamespace.use(function (socket, next) { return __awaiter(_this, void 0, void 0, function () {
                 var isMatching;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
-                            console.log(7);
                             if (!(socket.handshake.auth.username === basicAuth_1.username)) return [3 /*break*/, 2];
-                            console.log(8);
                             return [4 /*yield*/, bcrypt.compare(socket.handshake.auth.password, basicAuth_1.password)];
                         case 1:
                             isMatching = _a.sent();
-                            // if no match, console.log failure
+                            // if no match, failure
                             if (!isMatching) {
-                                console.log(9);
-                                console.log('invalid credentials!');
-                                return [2 /*return*/];
+                                throw new Error('invalid credentials');
                             }
-                            // if match, console.log and proceed
+                            // if match, proceed
                             else {
-                                console.log(10);
-                                console.log('authentication success with valid credentials');
                                 next();
                             }
                             return [3 /*break*/, 3];
-                        case 2:
-                            console.log(11);
-                            return [2 /*return*/];
+                        case 2: throw new Error('invalid credentials');
                         case 3: return [2 /*return*/];
                     }
                 });
             }); });
         }
     }
-    // create a namespace on the io instance they passed in
+    // create a namespace on the io instance they passed in, default to admin
     var requestedNsp = options.namespaceName || '/admin';
     var adminNamespace = sioInstance.of(requestedNsp);
     initAuthMiddleware(adminNamespace, options);
-    // get all namespaces on io
+    // get all namespaces on sio instance
     var allNsps = sioInstance._nsps;
     // loop through namespaces
-    // we HAVE TO DO A FOREACH!! (it's a map or something, not arr or obj) => some iterable of namespaces
-    // for .. in and for .. of don't work!
     allNsps.forEach(function (nsp) {
-        console.log(nsp.name);
         // prepend listener to namespace
         nsp.on('connection', function (socket) {
-            // if namespace is anything but admin
             if (nsp !== adminNamespace) {
-                // add a listener that will hear all incoming events and send them to admin
+                // all incoming
                 socket.onAny(function () {
                     var args = [];
                     for (var _i = 0; _i < arguments.length; _i++) {
@@ -147,7 +120,7 @@ function setup(sioInstance, options) {
                     }
                     adminNamespace.emit('event_received', createEventObj(socket.id, args, nsp.name, socket.rooms, 'incoming'));
                 });
-                // add a listener that will hear all outgoing events and send them to admin
+                // all outgoing
                 socket.onAnyOutgoing(function () {
                     var args = [];
                     for (var _i = 0; _i < arguments.length; _i++) {
